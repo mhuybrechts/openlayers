@@ -1,9 +1,35 @@
 'use strict';
 
 var fs = require('fs'),
-	path = require('path'),
-	util = require('util');
+	path = require('path');
 
+var prefix = "if (typeof Object.assign != 'function') {" +
+"Object.defineProperty(Object, 'assign', {" +
+"	value: function assign(target, varArgs) {" +
+"		'use strict';" +
+"		if (target == null) {" +
+"			throw new TypeError('Cannot convert undefined or null to object');" +
+"		}" +
+"" +
+"		var to = Object(target);" +
+"" +
+"		for (var index = 1; index < arguments.length; index++) {" +
+"			var nextSource = arguments[index];" +
+"" +
+"			if (nextSource != null) {" +
+"				for (var nextKey in nextSource) {" +
+"					if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {" +
+"						to[nextKey] = nextSource[nextKey];" +
+"					}" +
+"				}" +
+"			}" +
+"		}" +
+"		return to;" +
+"	}," +
+"	writable: true," +
+"	configurable: true" +
+"});" +
+"}";
 
 var listModulefiles = function (dir) {
 	var re = [ ];
@@ -75,6 +101,10 @@ fs.open('ol-module.js', 'w', function (err, fd) {
 	fs.writeSync(fd, '\n\n');
 	fs.writeSync(fd, properties.join(';\n'));
 	fs.writeSync(fd, '\n\n');
+
+	fs.writeSync(fd, prefix);
+	fs.writeSync(fd, '\n\n');
+
 	fs.writeSync(fd, assignments.join(';\n'));
 	fs.writeSync(fd, '\n\n');
 
