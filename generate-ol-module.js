@@ -110,5 +110,5 @@ fs.open('ol-module.js', 'w', function (err, fd) {
 
 	fs.writeSync(fd, 'export default ret;\n');
 
-	fs.close(fd);
+	fs.closeSync(fd);
 });
